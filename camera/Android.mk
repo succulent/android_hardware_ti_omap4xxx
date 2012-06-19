@@ -84,7 +84,7 @@ LOCAL_SHARED_LIBRARIES:= \
     libjpeg \
     libexif
 
-LOCAL_CFLAGS := -fno-short-enums -DCOPY_IMAGE_BUFFER
+LOCAL_CFLAGS := -fno-short-enums -DCOPY_IMAGE_BUFFER -fno-strict-aliasing
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_MODULE:= camera.$(TARGET_BOARD_PLATFORM)
@@ -127,7 +127,7 @@ LOCAL_SHARED_LIBRARIES:= \
     libcamera_client \
     libion \
 
-LOCAL_CFLAGS := -fno-short-enums -DCOPY_IMAGE_BUFFER
+LOCAL_CFLAGS := -fno-short-enums -DCOPY_IMAGE_BUFFER -fno-strict-aliasing
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_MODULE:= camera.$(TARGET_BOARD_PLATFORM)
