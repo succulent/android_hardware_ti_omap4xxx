@@ -249,24 +249,46 @@ class CameraMetadataResult : public android::RefBase
 {
 public:
 
-    CameraMetadataResult() : mMetadata(NULL) {};
-    CameraMetadataResult(camera_frame_metadata_t *meta) : mMetadata(meta) {};
+#ifdef OMAP_ENHANCEMENT_CPCAM
+    CameraMetadataResult(camera_memory_t * extMeta) : mExtendedMetadata(extMeta) {
+        mMetadata.faces = NULL;
+        mMetadata.number_of_faces = 0;
+#ifdef OMAP_ENHANCEMENT
+        mMetadata.analog_gain = 0;
+        mMetadata.exposure_time = 0;
+#endif
+    };
+#endif
+
+    CameraMetadataResult() {
+        mMetadata.faces = NULL;
+        mMetadata.number_of_faces = 0;
+#ifdef OMAP_ENHANCEMENT_CPCAM
+        mMetadata.analog_gain = 0;
+        mMetadata.exposure_time = 0;
+#endif
+
+#ifdef OMAP_ENHANCEMENT_CPCAM
+        mExtendedMetadata = NULL;
+#endif
+   }
 
     virtual ~CameraMetadataResult() {
-        if ( ( NULL != mMetadata ) && ( NULL != mMetadata->faces ) ) {
-            free(mMetadata->faces);
-            free(mMetadata);
-            mMetadata=NULL;
+        if ( NULL != mMetadata.faces ) {
+            free(mMetadata.faces);
         }
-
-        if(( NULL != mMetadata ))
-            {
-            free(mMetadata);
-            mMetadata = NULL;
-            }
+#ifdef OMAP_ENHANCEMENT_CPCAM
+        if ( NULL != mExtendedMetadata ) {
+            mExtendedMetadata->release(mExtendedMetadata);
+        }
+#endif
     }
 
-    camera_frame_metadata_t *getMetadataResult() { return mMetadata; };
+    camera_frame_metadata_t *getMetadataResult() { return &mMetadata; };
+
+#ifdef OMAP_ENHANCEMENT_CPCAM
+    camera_memory_t *getExtendedMetadata() { return mExtendedMetadata; };
+#endif
 
     static const ssize_t TOP = -1000;
     static const ssize_t LEFT = -1000;
@@ -276,7 +298,10 @@ public:
 
 private:
 
-    camera_frame_metadata_t *mMetadata;
+    camera_frame_metadata_t mMetadata;
+#ifdef OMAP_ENHANCEMENT_CPCAM
+    camera_memory_t *mExtendedMetadata;
+#endif
 };
 
 typedef enum {
@@ -391,7 +416,7 @@ class CameraFrame
     unsigned int mQuirks;
     unsigned int mYuv[2];
 #ifdef OMAP_ENHANCEMENT_CPCAM
-    camera_memory_t *mMetaData;
+    android::sp<CameraMetadataResult> mMetaData;
 #endif
     ///@todo add other member vars like  stride etc
 };
