@@ -791,8 +791,8 @@ TEEC_Result TEEC_OpenSessionEx (
        */
        if (connectionData != NULL)
        {
-           *(uint32_t*)sCommand.sOpenClientSession.sLoginData = *(uint32_t*)connectionData;
-           sCommand.sHeader.nMessageSize += 1;
+           memcpy(&sCommand.sOpenClientSession.sLoginData, &connectionData, sizeof(uint32_t)); //*(uint32_t*)sCommand.sOpenClientSession.sLoginData = *(uint32_t*)connectionData;
+           sCommand.sHeader.nMessageSize += sizeof(uint32_t);
        }
    }
    sCommand.sOpenClientSession.nCancellationID    = (uint32_t)operation; // used for TEEC_RequestCancellation
